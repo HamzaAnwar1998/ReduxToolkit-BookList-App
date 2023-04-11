@@ -1,24 +1,29 @@
-import React,{useState} from 'react'
+import React,{ useState } from 'react'
+import { addBookToFirestore } from '../Store/BooksSlice';
+import { useDispatch } from 'react-redux';
 
 export const AddBooks = () => {
 
-    // add book states
-    const [isbn, setIsbn] = useState('');
-    const [author, setAuthor] = useState('');
-    const [title, setTitle] = useState('');
+  const dispatch = useDispatch();
 
-    // add book event
-    const handleAddBook = (e) =>{
-        e.preventDefault();
-        let book={
-            isbn,author,title
-        }
-        // dispatch function
-        // clearing form
-        setIsbn('');
-        setAuthor('');
-        setTitle('');
+  // add book states
+  const [isbn, setIsbn] = useState('');
+  const [author, setAuthor] = useState('');
+  const [title, setTitle] = useState('');
+
+  // add book
+  const handleAddBook=(e)=>{
+    e.preventDefault();
+    let book = {
+      isbn, author, title
     }
+    // dispatch action
+    dispatch(addBookToFirestore(book));
+    // Clear the form fields
+    setIsbn('');
+    setAuthor('');
+    setTitle('');
+  }
 
   return (
     <form className='form-group custom-form' onSubmit={handleAddBook}>
