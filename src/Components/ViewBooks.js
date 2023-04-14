@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchBooks } from '../Store/BooksSlice';
+import { deleteAllBooks, deleteBook, fetchBooks } from '../Store/BooksSlice';
 import Icon from 'react-icons-kit';
 import {basic_trashcan_remove} from 'react-icons-kit/linea/basic_trashcan_remove';
 import {software_pencil} from 'react-icons-kit/linea/software_pencil';
@@ -16,6 +16,16 @@ export const ViewBooks = () => {
     dispatch(fetchBooks());
   },[dispatch])
 
+  // delete book
+  const handleDelete=(id)=>{
+    dispatch(deleteBook(id));
+  }
+
+  // delete all books
+  const deleteAll=()=>{
+    dispatch(deleteAllBooks());
+  }
+
   return (
     <div className='view-books'>
        {data.length > 0 ? (
@@ -29,7 +39,8 @@ export const ViewBooks = () => {
                   </div>
                   
                   <div className='actions'>
-                    <span className='icon red'>
+                    <span className='icon red'
+                      onClick={()=>handleDelete(newBook.id)}>
                       <Icon icon={basic_trashcan_remove} size={22}/>
                     </span>
                     <span className='icon blue'>
@@ -39,6 +50,9 @@ export const ViewBooks = () => {
                   
                 </div>
             ))}
+            {data.length > 1&&(
+              <button className='btn btn-danger' onClick={deleteAll}>Delete All</button>
+            )}
           </>
           ):(
             <div>There are no books added yet!</div>

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import db from '../Firebase/Config';
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 // add book to firestore
@@ -26,6 +26,32 @@ export const fetchBooks = createAsyncThunk(
     }
   );
 
+  // delete book
+  export const deleteBook = createAsyncThunk(
+    'books/deleteBook',
+    async(id)=>{
+      const books = await getDocs(collection(db,'Books'));
+      for(var snap of books.docs){
+        if(snap.id === id){
+          await deleteDoc(doc(db,'Books',snap.id));
+        }
+      }
+      return id;
+    }
+  );
+
+// delete all books
+export const deleteAllBooks=createAsyncThunk(
+  'books/deleteAllBooks',
+  async()=>{
+    const books = await getDocs(collection(db,'Books'));
+    for(var snap of books.docs){
+      await deleteDoc(doc(db,'Books',snap.id));
+    }
+    return [];
+  }
+);
+
 const booksSlice = createSlice({
     name: 'Books',
     initialState: {
@@ -41,6 +67,12 @@ const booksSlice = createSlice({
           })
           .addCase(addBookToFirestore.fulfilled, (state, action)=>{
             state.booksArray.push(action.payload);
+          })
+          .addCase(deleteBook.fulfilled,(state,action)=>{
+            state.booksArray = state.booksArray.filter((book)=>book.id !== action.payload);
+          })
+          .addCase(deleteAllBooks.fulfilled,(state,action)=>{
+            state.booksArray = action.payload;
           })
       }
 });
