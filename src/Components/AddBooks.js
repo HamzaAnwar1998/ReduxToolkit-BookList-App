@@ -1,8 +1,8 @@
-import React,{useEffect, useState} from 'react'
+import React,{ useEffect, useState } from 'react'
 import { addBookToFirestore, updateBook } from '../Store/BooksSlice';
 import { useDispatch } from 'react-redux';
 
-export const AddBooks = ({bookToBeEdited}) => {
+export const AddBooks = ({bookToEdit}) => {
 
   const dispatch = useDispatch();
 
@@ -11,12 +11,29 @@ export const AddBooks = ({bookToBeEdited}) => {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
 
-  // add book
+  // update book states
+  const [editedIsbn, setEditedIsbn] = useState('');
+  const [editedAuthor, setEditedAuthor] = useState('');
+  const [editedTitle, setEditedTitle] = useState('');
+
+  // updating update book states
+  useEffect(()=>{
+
+    if(bookToEdit!==null){
+      setEditedIsbn(bookToEdit.book.isbn);
+      setEditedAuthor(bookToEdit.book.author);
+      setEditedTitle(bookToEdit.book.title);
+    }
+
+  },[bookToEdit])
+
+  // add book event
   const handleAddBook=(e)=>{
     e.preventDefault();
     let book = {
       isbn, author, title
     }
+    // dispatch action
     dispatch(addBookToFirestore(book));
     // Clear the form fields
     setIsbn('');
@@ -24,47 +41,33 @@ export const AddBooks = ({bookToBeEdited}) => {
     setTitle('');
   }
 
-  // update book states
-  const [editedIsbn, setEditedIsbn] = useState('');
-  const [editedAuthor, setEditedAuthor] = useState('');
-  const [editedTitle, setEditedTitle] = useState('');
-
-  // updating edited states
-  useEffect(()=>{
-    if(bookToBeEdited!==null){
-      setEditedIsbn(bookToBeEdited.book.isbn);
-      setEditedAuthor(bookToBeEdited.book.author);
-      setEditedTitle(bookToBeEdited.book.title);
-    }
-  },[bookToBeEdited])
-
-  // update book
+  // update book event
   const handleUpdateBook=(e)=>{
     e.preventDefault();
-    let book = {
-      isbn:editedIsbn, author:editedAuthor, title:editedTitle
+    let book={
+      isbn: editedIsbn, author: editedAuthor, title: editedTitle
     }
-    dispatch(updateBook({id: bookToBeEdited.id, book}));
+    dispatch(updateBook({id: bookToEdit.id, book}));
   }
 
   return (
     <>
-      {bookToBeEdited===null?(
+      {bookToEdit===null?(
         <form className='form-group custom-form' onSubmit={handleAddBook}>
 
           <label>#ISBN</label>
           <input className='form-control' required
-            onChange={(e)=>setIsbn(e.target.value)} value={isbn} />
+          onChange={(e)=>setIsbn(e.target.value)} value={isbn} />
           <br />
 
           <label>Author</label>
           <input className='form-control' required
-            onChange={(e)=>setAuthor(e.target.value)} value={author} />
+          onChange={(e)=>setAuthor(e.target.value)} value={author} />
           <br />
 
           <label>Title</label>
           <input className='form-control' required
-            onChange={(e)=>setTitle(e.target.value)} value={title} />
+          onChange={(e)=>setTitle(e.target.value)} value={title} />
           <br />
 
           <button type='submit' className='btn btn-success'>Add</button>
@@ -75,20 +78,20 @@ export const AddBooks = ({bookToBeEdited}) => {
 
           <label>#ISBN</label>
           <input className='form-control' required
-            onChange={(e)=>setEditedIsbn(e.target.value)} value={editedIsbn} />
+          onChange={(e)=>setEditedIsbn(e.target.value)} value={editedIsbn} />
           <br />
 
           <label>Author</label>
           <input className='form-control' required
-            onChange={(e)=>setEditedAuthor(e.target.value)} value={editedAuthor} />
+          onChange={(e)=>setEditedAuthor(e.target.value)} value={editedAuthor} />
           <br />
 
           <label>Title</label>
           <input className='form-control' required
-            onChange={(e)=>setEditedTitle(e.target.value)} value={editedTitle} />
+          onChange={(e)=>setEditedTitle(e.target.value)} value={editedTitle} />
           <br />
 
-          <button type='submit' className='btn btn-success'>UPDATE</button>
+          <button type='submit' className='btn btn-success'>Update</button>
 
         </form>
       )}
