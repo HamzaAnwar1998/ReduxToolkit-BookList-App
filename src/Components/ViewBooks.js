@@ -5,7 +5,7 @@ import Icon from 'react-icons-kit';
 import {basic_trashcan_remove} from 'react-icons-kit/linea/basic_trashcan_remove';
 import {software_pencil} from 'react-icons-kit/linea/software_pencil';
 
-export const ViewBooks = () => {
+export const ViewBooks = ({handleEditIcon, bookToEdit, cancelUpdate}) => {
 
   const data = useSelector((state)=>state.books.booksArray);
 
@@ -39,19 +39,28 @@ export const ViewBooks = () => {
                   </div>
                   
                   <div className='actions'>
-                    <span className='icon red'
-                      onClick={()=>handleDelete(newBook.id)}>
-                      <Icon icon={basic_trashcan_remove} size={22}/>
-                    </span>
-                    <span className='icon blue'>
+                    {bookToEdit===null&&(
+                      <span className='icon red'
+                        onClick={()=>handleDelete(newBook.id)}>
+                        <Icon icon={basic_trashcan_remove} size={22}/>
+                      </span>
+                    )}
+                    <span className='icon blue'
+                      onClick={()=>handleEditIcon(newBook)}>
                       <Icon icon={software_pencil} size={22}/>
                     </span>
                   </div>
                   
                 </div>
             ))}
-            {data.length > 1&&(
-              <button className='btn btn-danger' onClick={deleteAll}>Delete All</button>
+            {bookToEdit===null?(
+              <>
+                {data.length > 1&&(
+                  <button className='btn btn-danger' onClick={deleteAll}>Delete All</button>
+                )}
+              </>
+            ):(
+              <button className='btn btn-danger' onClick={cancelUpdate}>Cancel Update</button>
             )}
           </>
           ):(
